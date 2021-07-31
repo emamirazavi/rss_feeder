@@ -1,9 +1,13 @@
+<?php
+require __DIR__ . '/vendor/autoload.php';
+$date = jdate();
+?>
 <html>
 
 <head>
     <style>
         body {
-            font-family: Vazir;
+            font-family: Vazir !important;
             direction: rtl;
         }
 
@@ -55,18 +59,25 @@ $categories = [
     CAT_SPORT => 'ورزشی',
 ];
 ?>
+
 <body>
     <form action="" method="get">
-        <select name="cat">
-            <?php 
-            foreach ($categories as $key => $value) {
-            ?>
-            <option value="<?php echo $key;?>" <?php if($cat == $key){echo 'selected';}?>><?php echo $value;?></option>
-            <?php 
-            }
-            ?>
-        </select>
-        <button type="submit">بارگذاری خبر</button>
+        <div class="input-group">
+            
+            <select name="cat" class="form-select">
+                <?php
+                foreach ($categories as $key => $value) {
+                ?>
+                    <option value="<?php echo $key; ?>" <?php if ($cat == $key) {
+                                                            echo 'selected';
+                                                        } ?>><?php echo $value; ?></option>
+                <?php
+                }
+                ?>
+            </select>
+            <button type="submit">بارگذاری خبر</button>
+
+        </div>
     </form>
     <?php
     function get_content($URL)
@@ -94,7 +105,7 @@ $categories = [
     // if(isset($_GET['cat'])) {
     //     $cat = $_GET['cat'];
     // }
-    
+
     switch (intval($cat)) {
         case CAT_GLOBAL: // omoumi
             $rss_urls = [
@@ -117,24 +128,37 @@ $categories = [
             ];
             break;
     }
+    ?>
+    <div class="m-3">
+        <?php
+        foreach ($rss_urls as $name => $rss_url) {
+            $obj = simplexml_load_file($rss_url);
+            $item = $obj->channel->item[0];
+            $title = (string) $item->title;
+            $link = (string) $item->link;
+            // pubDate:"Sat, 31 Jul 2021 12:05:48 GMT"
 
-    foreach ($rss_urls as $name => $rss_url) {
-        $obj = simplexml_load_file($rss_url);
-        $item = $obj->channel->item[0];
-        $title = (string) $item->title;
-        $link = (string) $item->link;
-        // var_dump([$title, $link]);
-        // $title (meghdar darad) == not false == true
-        // $title == '0'
-        if ($title) {
-    ?>
-            <a target="_blank" href="<?php echo $link; ?>" class="news-link">
-                <?php echo $title; ?>
-            </a> <span style="color: gray;"><?php echo $name; ?></span></br>
-    <?php
+            $time = \Morilog\Jalali\CalendarUtils::strftime('l، Y/m/d H:i', strtotime($item->pubDate)); // 1395-02-19
+            $time = \Morilog\Jalali\CalendarUtils::convertNumbers($time);
+            // $time = \Morilog\Jalali\CalendarUtils::strftime(
+            //     'Y-m-d H:i',
+            //     strtotime('Sat, 31 Jul 2021 10:05:48 GMT')
+            //); // 1395-02-19
+            // var_dump([$title, $link]);
+            // $title (meghdar darad) == not false == true
+            // $title == '0'
+            if ($title) {
+        ?>
+                <a target="_blank" title="<?php echo $time; ?>" href="<?php echo $link; ?>" class="news-link">
+                    <?php echo $title; ?>
+                </a> <span style="color: gray;"><?php echo $name; ?></span></br>
+        <?php
+            }
         }
-    }
-    ?>
+        ?>
+    </div>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 
 </html>
