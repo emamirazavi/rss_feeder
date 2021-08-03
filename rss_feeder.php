@@ -2,7 +2,7 @@
 require __DIR__ . '/vendor/autoload.php';
 $date = jdate();
 ?>
-<html>
+<html lang="fa" dir="rtl">
 
 <head>
     <style>
@@ -64,7 +64,7 @@ $categories = [
     <form action="" method="get">
         <div class="input-group">
             
-            <select name="cat" class="form-select">
+            <select name="cat" class="form-select form-select-lg">
                 <?php
                 foreach ($categories as $key => $value) {
                 ?>
@@ -75,7 +75,7 @@ $categories = [
                 }
                 ?>
             </select>
-            <button type="submit">بارگذاری خبر</button>
+            <button type="submit" class="btn btn-secondary btn-lg">بارگذاری خبر</button>
 
         </div>
     </form>
@@ -136,28 +136,23 @@ $categories = [
             $item = $obj->channel->item[0];
             $title = (string) $item->title;
             $link = (string) $item->link;
-            // pubDate:"Sat, 31 Jul 2021 12:05:48 GMT"
-
+            
             $time = \Morilog\Jalali\CalendarUtils::strftime('l، Y/m/d H:i', strtotime($item->pubDate)); // 1395-02-19
             $time = \Morilog\Jalali\CalendarUtils::convertNumbers($time);
-            // $time = \Morilog\Jalali\CalendarUtils::strftime(
-            //     'Y-m-d H:i',
-            //     strtotime('Sat, 31 Jul 2021 10:05:48 GMT')
-            //); // 1395-02-19
-            // var_dump([$title, $link]);
-            // $title (meghdar darad) == not false == true
-            // $title == '0'
+            $extra = \Morilog\Jalali\Jalalian::forge(strtotime($item->pubDate))->ago();
+            $extra = \Morilog\Jalali\CalendarUtils::convertNumbers($extra);
+            
             if ($title) {
         ?>
-                <a target="_blank" title="<?php echo $time; ?>" href="<?php echo $link; ?>" class="news-link">
+                <a target="_blank" title="<?php echo $time; ?>" href="<?php echo $link; ?>" class="news-link fs-2">
                     <?php echo $title; ?>
-                </a> <span style="color: gray;"><?php echo $name; ?></span></br>
+                </a> <span class="text-muted fs-4"><?php echo $extra; ?> | <?php echo $name; ?></span></br>
         <?php
             }
         }
         ?>
     </div>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.rtl.min.css" integrity="sha384-gXt9imSW0VcJVHezoNQsP+TNrjYXoGcrqBZJpry9zJt8PCQjobwmhMGaDHTASo9N" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 
